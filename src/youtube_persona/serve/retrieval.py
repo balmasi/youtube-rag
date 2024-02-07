@@ -7,7 +7,7 @@ from langchain_openai import ChatOpenAI
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel
+from langchain_core.pydantic_v1 import BaseModel, Required
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
 load_dotenv()
@@ -24,7 +24,7 @@ def get_retrieval_chain(youtube_user_handle, openai_api_key):
     )
 
 
-    retriever = db.as_retriever(search_type='similarity', search_kwargs={'k': 6})
+    retriever = db.as_retriever(search_type='similarity', search_kwargs={'k': 4})
 
     model = ChatOpenAI(temperature=0, openai_api_key=OPENAI_KEY)
 
@@ -33,17 +33,33 @@ def get_retrieval_chain(youtube_user_handle, openai_api_key):
     )
 
     # RAG prompt
+    SYSTEM_PROMPT = """
+Answer the question concisely based only on the following transcript snippets from a youtube video.
+Do not mention the snippets directly. If you don't know the answer, simply say 'I don't know'.
+A chat history may be provided for additional context.
+
+CHAT HISTORY:
+{chat_history}
+
+
+SNIPPETS:
+{context}
+"""
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "Answer the question concisely based only on the following context from a youtube transcript:\n{context}"),
+            ("system", SYSTEM_PROMPT),
             ("human", "Question:\n{question}")
         ]
     )
 
     # RAG
     chain = (
-        RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
+        RunnableParallel({
+            "context": retriever,
+            "question": lambda input: input['question'],
+            "chat_history": lambda input: input.get('chat_history', 'N/A')
+        })
         | prompt
         | model
         | StrOutputParser()
@@ -51,7 +67,8 @@ def get_retrieval_chain(youtube_user_handle, openai_api_key):
 
     # Add typing for input
     class Question(BaseModel):
-        __root__: str
+        question: str
+        chat_history: str = ""
 
 
     chain = chain.with_types(input_type=Question)
@@ -61,4 +78,4 @@ def get_retrieval_chain(youtube_user_handle, openai_api_key):
 
 
 # Expose chain
-chain = get_retrieval_chain(user_handle='@show-me-the-data', openai_api_key=OPENAI_KEY)
+chain = get_retrieval_chain(youtube_user_handle='@show-me-the-data', openai_api_key=OPENAI_KEY)

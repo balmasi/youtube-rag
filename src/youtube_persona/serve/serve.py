@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from langserve import add_routes
 
 from youtube_persona.serve.retrieval import chain
+
+load_dotenv()
 
 app = FastAPI(
     title="LangChain Server",
