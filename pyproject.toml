@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "youtube-persona"
+version = "0.1.0"
+description = ""
+authors = ["Borna Almasi <borna@borna-almasi.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+dagster = "^1.6.3"
+dagster-webserver = "^1.6.3"
+pandas = "^2.2.0"
+google-api-python-client = "^2.116.0"
+pinecone-client = "^3.0.2"
+langchain = "^0.1.5"
+langchain-community = "^0.0.17"
+pytube = "^15.0.0"
+youtube-transcript-api = "^0.6.2"
+openai = "^1.11.1"
+langserve = {extras = ["server"], version = "^0.0.41"}
+langchain-openai = "^0.0.5"
+
+[tool.dagster]
+
+
+[[tool.poetry.source]]
+name = "grpcio"
+url = "https://github.com/dagster-io/build-grpcio/wiki/Wheels"
+priority = "primary"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
