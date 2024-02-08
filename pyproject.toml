@@ -19,6 +19,7 @@ youtube-transcript-api = "^0.6.2"
 openai = "^1.11.1"
 langserve = {extras = ["server"], version = "^0.0.41"}
 langchain-openai = "^0.0.5"
+pydantic = "v1.10.6"
 
 [tool.dagster]
 

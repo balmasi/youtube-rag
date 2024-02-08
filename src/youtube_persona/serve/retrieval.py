@@ -8,8 +8,8 @@ from langchain_openai import ChatOpenAI
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel, Required
-from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+from langchain_core.pydantic_v1 import BaseModel
+from langchain_core.runnables import RunnableParallel
 
 load_dotenv()
 OPENAI_KEY = os.environ.get('OPENAI_KEY')
