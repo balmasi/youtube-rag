@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "youtube-persona"
+name = "youtube-persona-rag"
 version = "0.1.0"
 description = ""
 authors = ["Borna Almasi <borna@borna-almasi.com>"]
@@ -28,6 +28,11 @@ pydantic = "v1.10.6"
 name = "grpcio"
 url = "https://github.com/dagster-io/build-grpcio/wiki/Wheels"
 priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "default"
 
 [build-system]
 requires = ["poetry-core"]
