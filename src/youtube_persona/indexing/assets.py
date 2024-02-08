@@ -12,7 +12,7 @@ from youtube_persona.indexing.resources import PineconeResource
 
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 OPENAI_KEY = os.getenv('OPENAI_KEY')
-USER_HANDLE = '@show-me-the-data'
+USER_HANDLE = os.getenv('YOUTUBE_USER_HANDLE')
 
 @asset
 def video_ids(context: AssetExecutionContext) -> List[str]:

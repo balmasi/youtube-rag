@@ -13,6 +13,7 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
 load_dotenv()
 OPENAI_KEY = os.environ.get('OPENAI_KEY')
+YOUTUBE_USER_HANDLE = os.environ.get('YOUTUBE_USER_HANDLE')
 
 def get_retrieval_chain(youtube_user_handle, openai_api_key):
     db = Pinecone.from_existing_index(
@@ -81,4 +82,4 @@ def get_retrieval_chain(youtube_user_handle, openai_api_key):
 
 
 # Expose chain
-chain = get_retrieval_chain(youtube_user_handle='@show-me-the-data', openai_api_key=OPENAI_KEY)
+chain = get_retrieval_chain(youtube_user_handle=YOUTUBE_USER_HANDLE, openai_api_key=OPENAI_KEY)

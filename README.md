@@ -1,47 +1,65 @@
-# youtube_persona
+# Youtube Persona RAG example
 
-This is a [Dagster](https://dagster.io/) project scaffolded with [`dagster project scaffold`](https://docs.dagster.io/getting-started/create-new-project).
+This project shows how you can create a chatbot that understands all the contents of a given youtube creator's channel.
+
+It consists of 2 modules:
+1.  **Indexing:** The transcripts for the Youtube videos for the channel are indexed into a Pinecone (serverless) vector database
+2. **Serving:** Langchain is used to serve a basic chat endpoint where the history is handled by the client rather than the server.
 
 ## Getting started
 
-First, install your Dagster code location as a Python package. By using the --editable flag, pip will install your Python package in ["editable mode"](https://pip.pypa.io/en/latest/topics/local-project-installs/#editable-installs) so that as you develop, local code changes will automatically apply.
+You will need [poetry](https://python-poetry.org/docs/) to install the requirements.
 
 ```bash
-pip install -e ".[dev]"
+poetry install
 ```
 
-Then, start the Dagster UI web server:
+You will also need to set the following Environment Variables, which you can provide in a .env file at the root of the project
 
 ```bash
-dagster dev
+# Youtube user handle you're interested in (only @ style supported)
+YOUTUBE_USER_HANDLE='@show-me-the-data'
+
+# Youtube Data API key
+YOUTUBE_API_KEY='...'
+OPENAI_KEY='sk-...'
+PINECONE_API_KEY='...'
+
+# Optional LangSmith API key for observability
+LANGCHAIN_API_KEY='...'
+LANGCHAIN_TRACING_V2='true'
+LANGCHAIN_PROJECT='Youtube Persona - Show Me The Data'
+LANGCHAIN_ENDPOINT='https://api.smith.langchain.com'
 ```
 
-Open http://localhost:3000 with your browser to see the project.
 
-You can start writing assets in `youtube_persona/assets.py`. The assets are automatically loaded into the Dagster code location as you define them.
 
-## Development
+### Indexing jobs
+[Dagster](https://dagster.io/) is used as the orchestration framework for the indexing job. 
 
-### Adding new Python dependencies
-
-You can specify new Python dependencies in `setup.py`.
-
-### Unit testing
-
-Tests are in the `youtube_persona_tests` directory and you can run tests using `pytest`:
+To start the dagster web server and trigger the jobs using the UI, run the following command
 
 ```bash
-pytest youtube_persona_tests
+poetry run dagster dev -m src.youtube_persona.indexing
 ```
+Open http://localhost:3000 with your browser to see the Dagster project.
 
-### Schedules and sensors
+You can materialize the assets to index (only) new videos.
+
+You can define a cron schedule in `src/youtube_persona/indexing/__init__.py`.
 
 If you want to enable Dagster [Schedules](https://docs.dagster.io/concepts/partitions-schedules-sensors/schedules) or [Sensors](https://docs.dagster.io/concepts/partitions-schedules-sensors/sensors) for your jobs, the [Dagster Daemon](https://docs.dagster.io/deployment/dagster-daemon) process must be running. This is done automatically when you run `dagster dev`.
 
 Once your Dagster Daemon is running, you can start turning on schedules and sensors for your jobs.
 
-## Deploy on Dagster Cloud
+Alternatively, you can run the job directly using the following command:
 
-The easiest way to deploy your Dagster project is to use Dagster Cloud.
+```bash
+poetry run dagster job execute -j refresh_videos_job -f src/youtube_persona/indexing/__init__.py
+```
 
-Check out the [Dagster Cloud Documentation](https://docs.dagster.cloud) to learn more.
+If you just want to get this up and running in the cloud for demo purposes, I recommend using the [Render cron service](https://docs.render.com/cronjobs) for about $1 per month or stand up a free instance if you want the UI.
+
+### Serving Endpoint
+
+This project uses LangServe to expose a `/chat` endpoint.
