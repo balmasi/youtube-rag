@@ -7,10 +7,8 @@ from dagster import (
     EnvVar
 )
 
-from youtube_persona.indexing import assets
-from youtube_persona.indexing.resources import PineconeResource
-import os
-
+from . import assets
+from .resources import PineconeResource
 
 all_assets = load_assets_from_modules([assets])
 

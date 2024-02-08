@@ -6,9 +6,9 @@ from langchain_community.document_loaders import YoutubeLoader
 from langchain_core.documents import Document
 from dagster import AssetExecutionContext, asset
 
-from youtube_persona.indexing.embed import embed_openai
-from youtube_persona.indexing.utils import _split_text
-from youtube_persona.indexing.resources import PineconeResource
+from .embed import embed_openai
+from .utils import _split_text
+from .resources import PineconeResource
 
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 OPENAI_KEY = os.getenv('OPENAI_KEY')

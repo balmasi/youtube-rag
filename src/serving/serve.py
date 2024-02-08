@@ -5,7 +5,7 @@ from fastapi import FastAPI, status
 from langserve import add_routes
 from pydantic import BaseModel
 
-from youtube_persona.serve.retrieval import chain
+from .retrieval import chain
 
 
 load_dotenv()
