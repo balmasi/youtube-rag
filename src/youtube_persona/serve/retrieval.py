@@ -1,4 +1,5 @@
 import os
+from textwrap import dedent
 
 from dotenv import load_dotenv
 from langchain_community.vectorstores.pinecone import Pinecone
@@ -28,23 +29,25 @@ def get_retrieval_chain(youtube_user_handle, openai_api_key):
 
     model = ChatOpenAI(temperature=0, openai_api_key=OPENAI_KEY)
 
-    retriever = MultiQueryRetriever.from_llm(
+    multi_query_retriever = MultiQueryRetriever.from_llm(
         retriever=retriever, llm=model
     )
 
     # RAG prompt
-    SYSTEM_PROMPT = """
-Answer the question concisely based only on the following transcript snippets from a youtube video.
-Do not mention the snippets directly. If you don't know the answer, simply say 'I don't know'.
-A chat history may be provided for additional context.
+    SYSTEM_PROMPT = dedent(
+        """
+        Answer the question concisely based only on the following transcript snippets from a youtube video.
+        Do not mention the snippets directly. If you don't know the answer, simply say 'I don't know'.
+        A chat history may be provided for additional context.
 
-CHAT HISTORY:
-{chat_history}
+        CHAT HISTORY:
+        {chat_history}
 
 
-SNIPPETS:
-{context}
-"""
+        SNIPPETS:
+        {context}
+        """
+    )
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -56,7 +59,7 @@ SNIPPETS:
     # RAG
     chain = (
         RunnableParallel({
-            "context": retriever,
+            "context": multi_query_retriever,
             "question": lambda input: input['question'],
             "chat_history": lambda input: input.get('chat_history', 'N/A')
         })

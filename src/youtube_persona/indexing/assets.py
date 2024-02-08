@@ -78,11 +78,12 @@ def transcripts(
     video_transcripts = []
     
     for video_id in video_ids: 
-        if True or not pinecone_resource.is_document_already_indexed(
-            _get_index_id_from_video_id(video_id),
+        pinecone_id = _get_index_id_from_video_id(video_id)
+        if not pinecone_resource.is_document_already_indexed(
+            pinecone_id,
             namespace=USER_HANDLE
         ):
-            context.log.info(f'Video {video_id} not yet indexed. Fetching transcript for video {video_id}')
+            context.log.info(f'Document with id {pinecone_id} not yet indexed. Fetching transcript for video {video_id}')
             loader = YoutubeLoader.from_youtube_url(
                 f"https://www.youtube.com/watch?v={video_id}",
                 add_video_info=True,
@@ -91,7 +92,7 @@ def transcripts(
             docs = loader.load()
             video_transcripts.append(docs[0])
         else:
-            context.log.info(f'Video {video_id} already indexed')
+            context.log.info(f'Video {video_id} already indexed as document with id {pinecone_id}')
 
     # Track which videos were newly indexed
     context.add_output_metadata({
