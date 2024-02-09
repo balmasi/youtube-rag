@@ -90,7 +90,13 @@ def transcripts(
                 language=["en"]
             )
             docs = loader.load()
-            video_transcripts.append(docs[0])
+            if len(docs) == 1:
+                video_transcripts.append(docs[0])
+            elif len(docs) > 1:
+                context.log.warning(f'More than one transcript found for video {video_id}. Skipping.')
+            else:
+                context.log.warning(f'No transcript found for video {video_id}. Skipping. Is it a short?')
+            
         else:
             context.log.info(f'Video {video_id} already indexed as document with id {pinecone_id}')
 
