@@ -40,7 +40,7 @@ LANGCHAIN_ENDPOINT='https://api.smith.langchain.com'
 To start the dagster web server and trigger the jobs using the UI, run the following command
 
 ```bash
-make index-videos
+make dagster-ui
 ```
 Open http://localhost:3000 with your browser to see the Dagster project.
 
@@ -52,10 +52,11 @@ If you want to enable Dagster [Schedules](https://docs.dagster.io/concepts/parti
 
 Once your Dagster Daemon is running, you can start turning on schedules and sensors for your jobs.
 
+
 Alternatively, you can run the job directly using the following command:
 
 ```bash
-poetry run dagster job execute -j refresh_videos_job -m src.indexing
+make index-videos
 ```
 
 If you just want to get this up and running in the cloud for demo purposes, I recommend using the [Render cron service](https://docs.render.com/cronjobs) for free or stand up a free instance if you want the UI.
